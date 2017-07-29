@@ -9,4 +9,6 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const CHANGE_USERNAME = 'boilerplate/Home/CHANGE_USERNAME';
+export const CHANGE_WANTTOBE = 'boilerplate/Home/CHANGE_WANTTOBE';
+export const CHANGE_NONSEASON = 'boilerplate/Home/CHANGE_NONSEASON';
+export const CHANGE_SEASON = 'boilerplate/Home/CHANGE_SEASON';

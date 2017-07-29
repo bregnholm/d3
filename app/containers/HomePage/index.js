@@ -6,93 +6,65 @@
 
 import React from 'react';
 import Helmet from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import AtPrefix from './AtPrefix';
-import CenteredSection from './CenteredSection';
 import Form from './Form';
-import H2 from 'components/H2';
 import Input from './Input';
-import List from 'components/List';
-import ListItem from 'components/ListItem';
-import LoadingIndicator from 'components/LoadingIndicator';
-import RepoListItem from 'containers/RepoListItem';
-import Section from './Section';
-import messages from './messages';
+import Calculations from 'containers/Calculations';
 import { loadRepos } from '../App/actions';
-import { changeUsername } from './actions';
-import { selectUsername } from './selectors';
-import { selectRepos, selectLoading, selectError } from 'containers/App/selectors';
+import { changeNonSeason, changeSeason, changeWantToBe } from './actions';
+import { selectNonSeason, selectSeason, selectWantToBe } from './selectors';
 
 export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  /**
-   * when initial state username is not null, submit the form to load repos
-   */
-  componentDidMount() {
-    if (this.props.username && this.props.username.trim().length > 0) {
-      this.props.onSubmitForm();
-    }
-  }
-
   render() {
-    let mainContent = null;
-
-    // Show a loading indicator when we're loading
-    if (this.props.loading) {
-      mainContent = (<List component={LoadingIndicator} />);
-
-    // Show an error if there is one
-    } else if (this.props.error !== false) {
-      const ErrorComponent = () => (
-        <ListItem item={'Something went wrong, please try again!'} />
-      );
-      mainContent = (<List component={ErrorComponent} />);
-
-    // If we're not loading, don't have an error and there are repos, show the repos
-    } else if (this.props.repos !== false) {
-      mainContent = (<List items={this.props.repos} component={RepoListItem} />);
-    }
-
     return (
       <article>
-        <Helmet
-          title="Home Page"
-          meta={[
-            { name: 'description', content: 'A React.js Boilerplate application homepage' },
-          ]}
-        />
+        <Helmet title="D3 - Calc" />
         <div>
-          <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.startProjectHeader} />
-            </H2>
-            <p>
-              <FormattedMessage {...messages.startProjectMessage} />
-            </p>
-          </CenteredSection>
-          <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
-            <Form onSubmit={this.props.onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="mxstbr"
-                  value={this.props.username}
-                  onChange={this.props.onChangeUsername}
-                />
-              </label>
-            </Form>
-            {mainContent}
-          </Section>
+          <Form onSubmit={this.props.onSubmitForm}>
+            <label htmlFor="nonSeason">
+              Non season paragons:
+              <Input
+                id="nonSeason"
+                type="number"
+                placeholder="ie. 700"
+                value={this.props.nonSeason}
+                onChange={this.props.onChangeNonSeason}
+              />
+            </label>
+            <br />
+            <label htmlFor="season">
+              Season paragons:
+              <Input
+                id="season"
+                type="number"
+                placeholder="ie. 700"
+                value={this.props.season}
+                onChange={this.props.onChangeSeason}
+              />
+            </label>
+            <br />
+            <label htmlFor="season">
+              I want to be:
+              <Input
+                id="wantToBe"
+                type="number"
+                placeholder="ie. 1000"
+                value={this.props.wantToBe}
+                onChange={this.props.onChangeWantToBe}
+              />
+            </label>
+          </Form>
+          You current paragons for non season: {this.props.nonSeason}
+          <br />
+          You current paragons for season: {this.props.season}
+          <br />
+          I want to be: {this.props.wantToBe}
+          <br />
+          <br />
+
+          <Calculations {...this.props} />
         </div>
       </article>
     );
@@ -100,23 +72,20 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 }
 
 HomePage.propTypes = {
-  loading: React.PropTypes.bool,
-  error: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.bool,
-  ]),
-  repos: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.bool,
-  ]),
   onSubmitForm: React.PropTypes.func,
-  username: React.PropTypes.string,
-  onChangeUsername: React.PropTypes.func,
+  nonSeason: React.PropTypes.number,
+  season: React.PropTypes.number,
+  wantToBe: React.PropTypes.number,
+  onChangeNonSeason: React.PropTypes.func,
+  onChangeSeason: React.PropTypes.func,
+  onChangeWantToBe: React.PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
+    onChangeNonSeason: (evt) => dispatch(changeNonSeason(evt.target.value)),
+    onChangeSeason: (evt) => dispatch(changeSeason(evt.target.value)),
+    onChangeWantToBe: (evt) => dispatch(changeWantToBe(evt.target.value)),
     onSubmitForm: (evt) => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadRepos());
@@ -125,10 +94,9 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  repos: selectRepos(),
-  username: selectUsername(),
-  loading: selectLoading(),
-  error: selectError(),
+  nonSeason: selectNonSeason(),
+  season: selectSeason(),
+  wantToBe: selectWantToBe(),
 });
 
 // Wrap the component to inject dispatch and state into it

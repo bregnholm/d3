@@ -16,7 +16,9 @@
  */
 
 import {
-  CHANGE_USERNAME,
+  CHANGE_WANTTOBE,
+  CHANGE_NONSEASON,
+  CHANGE_SEASON,
 } from './constants';
 
 /**
@@ -26,9 +28,23 @@ import {
  *
  * @return {object}    An action object with a type of CHANGE_USERNAME
  */
-export function changeUsername(name) {
+export function changeNonSeason(paragon) {
   return {
-    type: CHANGE_USERNAME,
-    name,
+    type: CHANGE_NONSEASON,
+    paragon,
+  };
+}
+
+export function changeWantToBe(paragon) {
+  return {
+    type: CHANGE_WANTTOBE,
+    paragon,
+  };
+}
+
+export function changeSeason(paragon) {
+  return {
+    type: CHANGE_SEASON,
+    paragon,
   };
 }

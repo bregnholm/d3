@@ -6,12 +6,24 @@ import { createSelector } from 'reselect';
 
 const selectHome = () => (state) => state.get('home');
 
-const selectUsername = () => createSelector(
+const selectNonSeason = () => createSelector(
   selectHome(),
-  (homeState) => homeState.get('username')
+  (homeState) => homeState.get('nonSeason')
+);
+
+const selectWantToBe = () => createSelector(
+  selectHome(),
+  (homeState) => homeState.get('wantToBe')
+);
+
+const selectSeason = () => createSelector(
+  selectHome(),
+  (homeState) => homeState.get('season')
 );
 
 export {
   selectHome,
-  selectUsername,
+  selectNonSeason,
+  selectSeason,
+  selectWantToBe,
 };
