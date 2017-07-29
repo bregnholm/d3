@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 
 import Form from './Form';
 import Input from './Input';
-import Calculations from 'containers/Calculations';
+import Calculations from '../../components/Calculations';
 import { loadRepos } from '../App/actions';
 import { changeNonSeason, changeSeason, changeWantToBe } from './actions';
 import { selectNonSeason, selectSeason, selectWantToBe } from './selectors';
