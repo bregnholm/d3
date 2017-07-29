@@ -9,6 +9,4 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const CHANGE_WANTTOBE = 'boilerplate/Goblins/CHANGE_WANTTOBE';
-export const CHANGE_NONSEASON = 'boilerplate/Goblins/CHANGE_NONSEASON';
-export const CHANGE_SEASON = 'boilerplate/Goblins/CHANGE_SEASON';
+export const CHANGE_GOBLINS = 'boilerplate/Goblins/CHANGE_GOBLINS';
