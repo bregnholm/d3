@@ -15,10 +15,10 @@ function App(props) {
   return (
     <AppWrapper>
       <Helmet
-        titleTemplate="%s - React.js Boilerplate"
-        defaultTitle="React.js Boilerplate"
+        titleTemplate="%s"
+        defaultTitle=""
         meta={[
-          { name: 'description', content: 'A React.js Boilerplate application' },
+          { name: 'description', content: 'D3 stuff' },
         ]}
       />
       {React.Children.toArray(props.children)}
