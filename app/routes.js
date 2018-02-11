@@ -9,7 +9,6 @@ const errorLoading = (err) => {
 };
 
 const loadModule = (cb) => (componentModule) => {
-  console.log(componentModule);
   cb(null, componentModule.default);
 };
 
@@ -22,8 +21,6 @@ export default function createRoutes(store) {
       path: '/',
       name: 'home',
       getComponent(nextState, cb) {
-        console.log("Hello", cb)
-
         const importModules = Promise.all([
           System.import('containers/HomePage/reducer'),
           System.import('containers/HomePage/sagas'),
@@ -56,6 +53,7 @@ export default function createRoutes(store) {
 
         importModules.then(([reducer, sagas, component]) => {
           injectReducer('goblins', reducer.default);
+          injectSagas(sagas.default);
 
           renderRoute(component);
         });

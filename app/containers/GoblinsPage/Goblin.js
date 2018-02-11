@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React from 'react';
 
 const Goblin = ({ name, add, remove, count, totalCount }) => {

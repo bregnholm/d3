@@ -31,6 +31,6 @@ export function changeGoblins(addOrRemove, what) {
   return {
     type: CHANGE_GOBLINS,
     addOrRemove,
-    what
+    what,
   };
 }
