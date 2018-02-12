@@ -62,6 +62,28 @@ export default function createRoutes(store) {
       },
     },
     {
+      path: '/slot',
+      name: 'slot',
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          System.import('containers/SlotPage/reducer'),
+          // System.import('containers/SlotPage/sagas'),
+          System.import('containers/SlotPage'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, component]) => {
+          injectReducer('slot', reducer.default);
+          // injectSagas(sagas.default);
+
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    },
+    {
       path: '*',
       name: 'notfound',
       getComponent(nextState, cb) {

@@ -12,7 +12,7 @@ import { createStructuredSelector } from 'reselect';
 import Form from './Form';
 import Input from './Input';
 import Calculations from '../../components/Calculations';
-import { loadRepos } from '../App/actions';
+// import { loadRepos } from '../App/actions';
 import { changeNonSeason, changeSeason, changeWantToBe } from './actions';
 import { selectNonSeason, selectSeason, selectWantToBe } from './selectors';
 
@@ -22,7 +22,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
       <article>
         <Helmet title="D3 - Calc" />
         <div>
-          <Form onSubmit={this.props.onSubmitForm}>
+          <Form>
             <label htmlFor="nonSeason">
               Non season paragons:
               <Input
@@ -72,7 +72,6 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 }
 
 HomePage.propTypes = {
-  onSubmitForm: React.PropTypes.func,
   nonSeason: React.PropTypes.number,
   season: React.PropTypes.number,
   wantToBe: React.PropTypes.number,
@@ -86,10 +85,6 @@ export function mapDispatchToProps(dispatch) {
     onChangeNonSeason: (evt) => dispatch(changeNonSeason(evt.target.value)),
     onChangeSeason: (evt) => dispatch(changeSeason(evt.target.value)),
     onChangeWantToBe: (evt) => dispatch(changeWantToBe(evt.target.value)),
-    onSubmitForm: (evt) => {
-      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-      dispatch(loadRepos());
-    },
   };
 }
 
