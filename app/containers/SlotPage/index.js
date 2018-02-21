@@ -1,62 +1,121 @@
-/* eslint-disable */
-
 import React from 'react';
 import Helmet from 'react-helmet';
-// import { connect } from 'react-redux';
-// import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components';
+import H1 from 'components/H1';
+import Button from 'components/Button';
+import SlotOdds from './Slot/Odds';
 
-import { random, difference, fill, countBy } from 'lodash';
+import {
+  random, difference, flattenDeep, isEqual, flatten,
+} from 'lodash';
 
-const OneSlot = ({ token }) => {
-  const style = {
-    flexGrow: 1,
-    borderLeft: '1px solid black',
-    lineHeight: '100px',
-    backgroundColor: token
-  };
+const red = new Array(8).fill('RED');
+const green = new Array(4).fill('GREEN');
+const blue = new Array(2).fill('BLUE');
+// const yellow = new Array(1).fill('YELLOW');
+const whatCanIHit = [
+  ...red,
+  ...green,
+  ...blue,
+  // ...yellow,
+];
+const uniqueTokens = new Set(whatCanIHit);
+const OneSlot = styled.div`
+  border-left: 1px solid black;
+  line-height: 100px;
+  flex-grow: 1;
+  background-color: ${props => props.color};
+  color: ${props => props.winnerLine ? 'gold' : 'black'};
+  transition: all 1000ms;
+  width: 25%;
+`;
 
-  return (
-    <div style={style}>{token}</div>
-  );
+const Winner = styled.div`
+  background-color: ${props => props.color};
+  text-align: center;
+  font-size: 50px;
+  border: 1px solid black;
+  border-top: none;
+  position: absolute;
+  width: 100%;
+`;
+
+const SlotContainer = styled.div`
+  border: 1px solid black;
+  border-left: none;
+  border-bottom: none;
+`;
+
+const Line = styled.div`
+  display: flex;
+  text-align: center;
+  border-bottom: 1px solid black;
+`;
+
+const winningLines = [
+  [true, true, true],
+  [false, false, false, true, true, true],
+  [false, false, false, false, false, false, true, true, true],
+  [true, false, false, false, true, false, false, false, true],
+  [false, false, true, false, true, false, true, false, false],
+];
+
+const getWinningLines = (lines) => {
+  const tokens = flattenDeep(lines);
+
+  const howto = [...uniqueTokens].map(a => {
+    return winningLines.map(b => {
+      return b.map(el => el && a);
+    })
+  });
+
+  const what = howto.map((a) => {
+    const test = a.filter(b => {
+      const hej = b.map((color, index) => {
+        return color === tokens[index] && color;
+      });
+
+      return isEqual(hej, b);
+    })
+
+    return test;
+  });
+
+  return flatten(what);
+}
+const calcNumber = (token, line) => {
+  if(line == 0) return token;
+
+  const nextLine = ([...uniqueTokens].length);
+
+  return token + (nextLine * line);
 }
 
-const Winner = ({ token }) => <div style={{
-  backgroundColor: token,
-  textAlign: 'center',
-  fontSize: 50,
-  marginBottom: 50,
-}}>{token}</div>;
-const SlotMachine =  ({ curBet, curSpin }) => {
-  console.log(curBet, curSpin);
+const SlotMachine = ({ curBet, curSpin }) => {
   const multiplier = 1000;
-  const whatCanIHit = [
-    'RED', 'RED', 'RED', 'RED',
-    'RED', 'RED', 'RED', 'RED',
-    'GREEN', 'GREEN',
-    'GREEN', 'GREEN',
-    'BLUE',
-    'BLUE',
-    'BLUE',
-    'YELLOW',
-  ];
-  const theSet = new Set(whatCanIHit);
-  const multiplierByToken = Object.keys(countBy(whatCanIHit)).map((key, value) =>  multiplier / value);
-  console.log(multiplierByToken, countBy(whatCanIHit));
-  const tokens = [...theSet].fill(0).map(() => whatCanIHit[random(0, whatCanIHit.length - 1 )]);
-  const allGood = ([...theSet].map(k => difference(tokens, [k, k, k]))).map(x => x.length === 0);
+  // const uniqueTokens = new Set(whatCanIHit);
+  const lines = [
+    [...uniqueTokens].fill(0).map(() => whatCanIHit[random(0, whatCanIHit.length - 1 )]),
+    [...uniqueTokens].fill(0).map(() => whatCanIHit[random(0, whatCanIHit.length - 1 )]),
+    [...uniqueTokens].fill(0).map(() => whatCanIHit[random(0, whatCanIHit.length - 1 )]),
+  ]
+
+  const winnings = getWinningLines(lines);
+
+  const w = flatten(winnings.map((s) => {
+    const horse = s.map((o, i) => {
+      return o !== false && i;
+    }).filter(f => typeof f === 'number')
+
+    return horse;
+  }));
 
   return (
-    <div>
-      {allGood.map((k,v) => k && <Winner token={whatCanIHit[v]} />)}
-      <div style={{
-        display: 'flex',
-        textAlign: 'center',
-        border: '1px solid black',
-        borderLeft: 'none',
-      }}>
-        {tokens.map(t => <OneSlot token={t} />)}
-      </div>
-      {[...theSet].map(v => <div>{v}: {curBet} x {multiplier / countBy(whatCanIHit)[v]}</div>)}
+    <div style={{position: 'relative'}}>
+      <SlotContainer>
+        {lines.map((l, li) => <Line>{l.map((t, i) => <OneSlot winnerLine={w.indexOf(calcNumber(i, li)) >= 0} color={t}>{t}</OneSlot>)}</Line>)}
+      </SlotContainer>
+      <SlotOdds tokens={whatCanIHit} multiplier={multiplier} />
     </div>
   );
 }
@@ -76,38 +135,13 @@ class SlotPage extends React.Component {
     return (
       <article>
         <Helmet title="SLOT MACHINE" />
-        <h1>Slot Machine</h1>
+        <div>
+          <H1>Slot Machine</H1>
+        </div>
         <SlotMachine curBet={this.state.bet} curSpin={this.state.spins} />
-        <button onClick={this.onClick}>CLICKME</button>
+        <Button onClick={this.onClick}>SPIN</Button>
       </article>
     );
   }
 }
-//
-// const SlotPage = ({}) => (
-//   <article>
-//     <Helmet title="SLOT MACHINE" />
-//     <h1>Slot Machine</h1>
-//     <SlotMachine />
-//     <button onClick=()>CLICKME</button>
-//   </article>
-// );
-
-// SlotPage.propTypes = {
-//   goblins: React.PropTypes.array,
-//   c: React.PropTypes.func,
-// };
-//
-// export function mapDispatchToProps(dispatch) {
-//   return {
-//     c: (addOrRemove, what) => dispatch(changeGoblins(addOrRemove, what)),
-//   };
-// }
-// //
-// const mapStateToProps = createStructuredSelector({
-//   goblins: selectGoblins(),
-// });
-//
-// // Wrap the component to inject dispatch and state into it
-// export default connect(mapStateToProps, mapDispatchToProps)(SlotPage);
 export default SlotPage;
